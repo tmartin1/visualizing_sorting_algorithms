@@ -17,14 +17,15 @@ sorts.shiftSort = function(array) {
 	    }
 	    itterations++;
 	    $('#itterations').text(itterations);
-	    if (i++ < arr.length) timedLoop(i);
+	    if (i < arr.length) timedLoop(++i);
 		}, 1)
 	})(0);
   return arr;
 };
 
-sorts.bubbleSort = function(array, noChange) {
+sorts.bubbleSort = function(array, itterations, noChange) {
 	arr = array.slice();
+	itterations = itterations || 0;
   // base case
   if (noChange) {
   	update(arr);
@@ -32,14 +33,20 @@ sorts.bubbleSort = function(array, noChange) {
   }
   // recursive case
   var noChange = true;
-  for (var i=0; i<arr.length; i++) {
-  	if (arr[i] > arr[i+1]) {
-  		var temp = arr[i];
-  		arr[i] = arr[i+1];
-  		arr[i+1] = temp;
-  		noChange = false;
-  	}
-  }
-  return this.bubbleSort(arr, noChange);
+	(function innerloop(i) {
+		setTimeout(function() {
+	  	if (arr[i] < arr[i+1]) {
+	  		var temp = arr[i];
+	  		arr[i] = arr[i+1];
+	  		arr[i+1] = temp;
+	  		noChange = false;
+	  		update(arr);
+	  	}
+	  	itterations++;
+	  	$('#itterations').text(itterations);
+	    if (i < arr.length) innerloop(++i);
+	    else sorts.bubbleSort(arr, itterations, noChange);
+		}, 1)
+	})(0);
 };
 
