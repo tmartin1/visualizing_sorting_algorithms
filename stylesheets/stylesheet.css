@@ -880,7 +880,7 @@ footer a:hover {
 @media only screen and (max-width: 479px) { }
 
 svg {
-  border: CornflowerBlue 1px solid;
+  border: black 1px solid;
   background-color: WhiteSmoke;
 }
 
