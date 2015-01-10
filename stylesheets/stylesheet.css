@@ -881,8 +881,11 @@ footer a:hover {
 
 svg {
   border: CornflowerBlue 1px solid;
+  background-color: WhiteSmoke;
 }
 
 rect {
   fill: CornflowerBlue;
+  stroke-width: 1px ;
+  stroke: black;
 }
