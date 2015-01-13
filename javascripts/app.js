@@ -75,6 +75,7 @@ var randomize = function() {
 randomize();
 
 var startSort = function() {
+	$('#itterations').text('0');
 	sorts[$('#sortOptions').val()].display(unsorted);
 };
 

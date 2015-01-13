@@ -78,7 +78,6 @@ sorts.insertionSort = {
 		    if (i < arr.length) timedLoop(++i);
 			}, 1)
 		})(0);
-	  return arr;
 	},
 	compare: function(array) {
 		var arr = array.slice();
@@ -97,45 +96,32 @@ sorts.insertionSort = {
 
 
 // compare working
-// display is mostly working, it's just faster animation than the others
+// display is working
 sorts.selectionSort = {
 	name: 'Selection Sort',
 	itterations: 0,
 	display: function(array) {
 		var arr = array.slice();
 		var result = [];
-		// outerLoop executes the while loop from the compare algorithm.
-		var timer = arr.length;
-		(function outerLoop() {
+
+		var innerLoop = function(i, index) {
 		  setTimeout(function() {
-				var index = 0;
+		  	if (arr[i] < arr[index]) index = i;
+		  	$('#itterations').text(++sorts['selectionSort'].itterations);
+		  	update(result.concat(arr));
+		  	// colorize(this);
+		  	if (i <= arr.length) innerLoop(++i, index);
+		  	else outerLoop(index);
+	  	}, 1)
+	  };
 
-				// innerLoop executes the for loop from the compare algorithm.
-				// (function innerLoop(i, index) {
-				//   setTimeout(function() {
-				  for (var i=0; i< arr.length; i++) {
-						if (arr[i] < arr[index]) index = i;
-				    $('#itterations').text(++sorts['selectionSort'].itterations);
-				  }
-				//     if (i <= arr.length) innerLoop(++i);
-				//   }, 1)
-				// })(0);
-
-		  // setTimeout(function() {
-		  	console.log('pushing index', index);
-		    result.push(arr.splice(index,1)[0]);
-		    update(result.concat(arr));
-		    $('#itterations').text(++sorts['selectionSort'].itterations);
-		    if (arr.length > 0) {
-		    	timer = arr.length;
-		    	outerLoop();
-		    }
-			}, timer);
-
-		})();
-
+	  var outerLoop = function(index) {
+	  	result.push(arr.splice(index,1)[0]);
+	  	update(result.concat(arr));
+	  	if (arr.length > 0) innerLoop(0, 0);
+	  };
+		innerLoop(0, 0);
 		update(result);
-		return arr;
 	},
 	compare: function(array) {
 		var arr = array.slice();
