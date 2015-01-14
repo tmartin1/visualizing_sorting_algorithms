@@ -172,8 +172,8 @@ sorts.heapSort = {
 };
 
 
-// compare not working
-// display not working
+// compare is working
+// display is working
 sorts.shellSort = {
 	name: 'Shell Sort',
 	itterations: 0,
@@ -225,7 +225,7 @@ sorts.shellSort = {
 			var gap = gaps[i];
 			for (var j=gap; j<=array.length*gap; j+=gap) {
 				// Compare at existing indicies of arr[gap[i]], arr[gap[i*2]], etc.
-				if (arr[j] > arr[j+gap]) { // 15, 30, 45, 60
+				if (arr[j] > arr[j+gap]) {
 					var temp = arr[j];
 		      arr[j] = arr[j+gap];
 		      arr[j+gap] = temp;
@@ -239,24 +239,75 @@ sorts.shellSort = {
 };
 
 
-// compare not working
+// compare is working
 // display not working
 sorts.mergeSort = {
 	name: 'Merge Sort',
 	itterations: 0,
 	display: function(array) {
 		var arr = array.slice();
-		//
-		(function timedLoop(i) {
+
+		var timedMerge = function(left, right, result, iLeft, iRight) {
 		  setTimeout(function() {
-		  	//
+		  	result = result || [];
+		  	iLeft = iLeft || 0;
+		  	iRight = iRight || 0;
+
 		    $('#itterations').text(++sorts['mergeSort'].itterations);
-		  }, 1)
-		})(0)
+		    if (left[iLeft] < right[iRight]) result.push(left[iLeft++]);
+		    else result.push(right[iRight++]);
+
+		    if (iLeft < left.length && iRight < right.length) {
+		    	timedLoop(left, right, result, iLeft, iRight);
+		    } else {
+		    	return result.concat(left.slice(iLeft)).concat(right.slice(iRight));
+		    }
+		  }, 1);
+		};
+
+		var mergeSort = function(array) {
+			sorts['mergeSort'].itterations++;
+			if (array.length < 2) return array;
+			var arr = array.slice();
+			
+			var middle = Math.floor(arr.length / 2);
+			var left = arr.slice(0, middle);
+			var right = arr.slice(middle);
+	    return timedMerge(mergeSort(left), mergeSort(right));
+	  };
+
 	},
 	compare: function(array) {
 		var arr = array.slice();
-		//
+
+		var merge = function(left, right) {
+			var result = [];
+			var iLeft = 0;
+			var iRight = 0;
+
+			while (iLeft < left.length && iRight < right.length) {
+				sorts['mergeSort'].itterations++;
+				if (left[iLeft] < right[iRight]) result.push(left[iLeft++]);
+				else result.push(right[iRight++]);
+			}
+
+			return result.concat(left.slice(iLeft)).concat(right.slice(iRight));
+		};
+
+		var mergeSort = function(array) {
+			sorts['mergeSort'].itterations++;
+			if (array.length < 2) return array;
+			var arr = array.slice();
+			
+			var middle = Math.floor(arr.length / 2);
+			var left = arr.slice(0, middle);
+			var right = arr.slice(middle);
+	    return merge(mergeSort(left), mergeSort(right));
+	  };
+		
+		var result = mergeSort(arr);
+		console.log('arr is ', arr);
+		console.log('result is', result);
 		return this.itterations;
 	}
 };
