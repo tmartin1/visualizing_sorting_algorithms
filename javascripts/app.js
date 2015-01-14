@@ -1,8 +1,7 @@
 /* To do:
- *	 - complete merge sort
- *	 - complete selection sort
- *	 - complete shell sort
  *	 - complete heap sort
+ *	 - complete shell sort
+ *	 - complete merge sort
  *	 - refator sort methods such that display functions and compare
  *		 functions are processed by the same external function that takes
  *		 the array and a callback as parameters.

@@ -158,7 +158,15 @@ sorts.heapSort = {
 	},
 	compare: function(array) {
 		var arr = array.slice();
-		//
+		var binaryArray = [];
+		var result = [];
+
+		// Build the binary sorted tree (array) from the initial array.
+
+
+		// From the binary array, build the sorted array.
+
+
 		return this.itterations;
 	}
 };
@@ -171,16 +179,61 @@ sorts.shellSort = {
 	itterations: 0,
 	display: function(array) {
 		var arr = array.slice();
-		//
-		(function timedLoop(i) {
+		var gaps = [];
+		// Define steps, 2^k - 1
+		var i = 1;
+		while ( (Math.pow(2,i) - 1) < (arr.length / 2) ) {
+			gaps.unshift(Math.pow(2,i) - 1);
+			i++;
+		}
+
+		var innerLoop = function(i, gap) {
 		  setTimeout(function() {
-		  	//
-		  }, 1)
-		})(0)
+		  	// colorize the intervals of 'gap'
+		  	if (arr[i] > arr[i+gap]) {
+					var temp = arr[i];
+		      arr[i] = arr[i+gap];
+		      arr[i+gap] = temp;
+		      i -= 2*gap;
+				}
+		  	$('#itterations').text(++sorts['selectionSort'].itterations);
+		  	update(arr);
+		  	if (i <= array.length*gap) innerLoop(i+gap, gap);
+		  	else outerLoop();
+	  	}, 1)
+	  };
+
+	  var outerLoop = function() {
+	  	if (gaps.length > 0) innerLoop(0, gaps.shift());
+	  };
+
+		innerLoop(1, gaps.shift());
+		update(arr);
 	},
 	compare: function(array) {
 		var arr = array.slice();
-		//
+		var gaps = [];
+		// Define steps, 2^k - 1
+		var i = 1;
+		while ( (Math.pow(2,i) - 1) < (arr.length / 2) ) {
+			gaps.unshift(Math.pow(2,i) - 1);
+			i++;
+		}
+		// Compare and sort according to gaps.
+		for (var i=0; i<gaps.length; i++) {
+			// For each gap width, compare and sort accordingly.
+			var gap = gaps[i];
+			for (var j=gap; j<=array.length*gap; j+=gap) {
+				// Compare at existing indicies of arr[gap[i]], arr[gap[i*2]], etc.
+				if (arr[j] > arr[j+gap]) { // 15, 30, 45, 60
+					var temp = arr[j];
+		      arr[j] = arr[j+gap];
+		      arr[j+gap] = temp;
+		      j -= 2*gap;
+				}
+				this.itterations++;
+			}
+		}
 		return this.itterations;
 	}
 };
