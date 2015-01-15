@@ -7,6 +7,8 @@
  *		 the array and a callback as parameters.
  * 	 - Add table to index.html to show the comparrison of itterations
  * 		 for each of the different sorting algorithms.
+ * 	 - Add user input for array size (16, 32, 64).
+ * 	 - Add user input for animation speed (slide bar?).
  */
 
 // Populate dropdown list with sorting algorithms
@@ -24,7 +26,11 @@ var elements = 64; // how many elements will be in the array (this will affect t
 var lineWidth = rWidth / elements;
 var unsorted = []; // this is the array that will be sorted.
 var animationTime = 10;
-var rectColor = 'CornflowerBlue';
+
+// Default colors for animations.
+var unsortedColor = 'CornflowerBlue';
+var sortedColor = 'BlueViolet';
+var searchColor = 'red';
 
 // Build SVG element and append to DOM.
 d3.select('#display').append('svg')
@@ -41,7 +47,7 @@ var populate = function(data) {
 		.enter().append('rect')
 		.attr('id', function(d,i) { return 'r'+i; })
 		.attr('class', 'rect')
-		.attr('fill', rectColor)
+		.attr('fill', unsortedColor)
     .attr('x', function(d,i) { return i*lineWidth; })
     .attr('y', function(d,i) { return rHeight-d.val; })
     .attr('height', function(d,i) { return d.val; })
@@ -101,7 +107,7 @@ var parseStep = function(step) {
 	  	// Change color of rectangle to step.color || 'red'
 	  },
 	  'clearHighlight': function() {
-	  	d3.select('#r'+step.data.pos).style('fill', rectColor);
+	  	d3.select('#r'+step.data.pos).style('fill', unsortedColor);
 	  	// Change color of svg element back to it's original color.
 	  }
 	};

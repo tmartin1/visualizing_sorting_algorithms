@@ -5,9 +5,7 @@ var swap = function(arr, a, b) {
 	arr[a] = arr[b];
 	arr[b] = temp;
 };
-var unsortedColor = 'CornflowerBlue';
-var sortedColor = 'BlueViolet';
-var searchColor = 'red';
+
 // Object to hold all sort functions and properties.
 var sorts = {};
 
@@ -32,7 +30,14 @@ sorts.bubbleSort = {
 	  	}
 	  	this.itterations++;
 	  }
-	  return changed === true ? this.display(arr, true, steps) : (animate) ? animateSteps(steps) : this.itterations;
+	  if (changed) this.display(arr, true, steps);
+	  else {
+	  	// List is fully sorted, highlight all in sortedColor.
+	  	for (var i=0; i < arr.length; i++) {
+	  		steps.push({ animation: 'highlight', color: sortedColor, data: arr[i] });
+	  	}
+	  	return (animate) ? animateSteps(steps) : this.itterations;
+	  }
 	}
 };
 
@@ -46,7 +51,7 @@ sorts.insertionSort = {
 		var arr = array.slice();
 	  for (var i=0; i < arr.length; i++) {
 	  	var focus = arr.slice()[i];
-	  	steps.push({ animation: 'highlight', color: searchColor, data: focus });
+	  	steps.push({ animation: 'highlight', color: sortedColor, data: focus });
 	    if (arr[i] && arr[i+1] && arr[i].val > arr[i+1].val) {
 	  		steps.push({ animation: 'highlight', color: searchColor, data: arr[i+1] });
 	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
@@ -54,7 +59,7 @@ sorts.insertionSort = {
 	  		steps.push({ animation: 'clearHighlight', data: arr[i+1] });
 	      i = i-2 >= -1 ? i-2 : i-1;
 	    } else {
-	  		steps.push({ animation: 'clearHighlight', data: arr[i] });
+	  		// steps.push({ animation: 'clearHighlight', data: arr[i] });
 	  	}
 	    this.itterations++;
 	  }
