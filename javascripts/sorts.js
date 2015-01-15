@@ -16,33 +16,23 @@ var sorts = {};
 sorts.bubbleSort = {
 	name: 'Bubble Sort',
 	itterations: 0,
-	display: function(array) {
-		arr = array.slice();
-	  var changed = false;
-		(function timedLoop(i) {
-			setTimeout(function() {
-		  	if (arr[i+1] && arr[i].val > arr[i+1].val) {
-		  		swap(arr, i, i+1);
-		  		changed = true;
-		  		update(arr);
-		  	}
-		  	$('#itterations').text(++sorts['bubbleSort'].itterations);
-		    if (i < arr.length) timedLoop(++i);
-		    else if (changed) return sorts['bubbleSort'].display(arr);
-			}, 1)
-		})(0);
-	},
-	compare: function(array) {
+	display: function(array, animate, steps) {
+		steps = steps || [];
 		var arr = array.slice();
 	  var changed = false;
 	  for (var i=0; i < arr.length; i++) {
+	  	var focus = arr.slice()[i];
+	  	steps.push({ animation: 'highlight', color: 'red', data: focus });
 	  	if (arr[i+1] && arr[i].val > arr[i+1].val) {
+	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
 	  		swap(arr, i, i+1);
 	  		changed = true;
+	  	} else {
+	  		steps.push({ animation: 'clearHighlight', data: focus });
 	  	}
 	  	this.itterations++;
 	  }
-	  return changed === true ? this.compare(arr) : this.itterations;
+	  return changed === true ? this.display(arr, true, steps) : (animate) ? animateSteps(steps) : this.itterations;
 	}
 };
 
@@ -69,37 +59,6 @@ sorts.insertionSort = {
 		if (animate) animateSteps(steps);
 	}
 };
-/* Original code, before refactoring to store and animate steps.
-sorts.insertionSort = {
-	name: 'Insertion Sort',
-	itterations: 0,
-	display: function(array) {
-		var arr = array.slice();
-		(function timedLoop(i) {
-			setTimeout(function() {
-				if (arr[i] > arr[i+1]) {
-		      swap(arr, i, i+1);
-		      i -= 2;
-		    	update(arr);
-		    }
-		    $('#itterations').text(++sorts['insertionSort'].itterations);
-		    if (i < arr.length) timedLoop(++i);
-			}, 1)
-		})(0);
-	},
-	compare: function(array) {
-		var arr = array.slice();
-	  for (var i=0; i < arr.length; i++) {
-	    if (arr[i] > arr[i+1]) {
-	      swap(arr, i, i+1);
-	      i -= 2;
-	    }
-	    this.itterations++;
-	  }
-		return this.itterations;
-	}
-};
-*/
 
 
 // compare working
