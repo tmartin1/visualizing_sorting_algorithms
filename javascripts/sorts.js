@@ -1,60 +1,48 @@
-// Helper function to process sorts for the display.
-var displaySolve = function(array, callback) {
-	(function timedLoop(i) {
-	  setTimeout(function() {
-	  	//
-	  }, 1)
-	})(0)
-};
-
-// Helper function to process sorts for comparrisons.
-var simpleSolve = function(array, callback) {
-	//
+// Helper function to process swapping of two elements in an array.
+var swap = function(arr, a, b, steps) {
+	steps = steps || [];
+	if (a === b) return;
+	var temp = arr[a];
+	arr[a] = arr[b];
+	arr[b] = temp;
+	// if (steps) steps.push({ animation: 'swap', data1: arr.slice(a, 1), data2: arr.slice(b, 1) });
 };
 
 // Object to hold all sort functions and properties.
 var sorts = {};
-
 
 // compare working
 // display working
 sorts.bubbleSort = {
 	name: 'Bubble Sort',
 	itterations: 0,
-	display: function(array, noChange) {
+	display: function(array) {
 		arr = array.slice();
-		itterations = itterations || 0;
-	  if (noChange) return;
-	  var noChange = true;
+	  var changed = false;
 		(function timedLoop(i) {
 			setTimeout(function() {
-		  	if (arr[i] > arr[i+1]) {
-		  		var temp = arr[i];
-		  		arr[i] = arr[i+1];
-		  		arr[i+1] = temp;
-		  		noChange = false;
+		  	if (arr[i+1] && arr[i].val > arr[i+1].val) {
+		  		swap(arr, i, i+1);
+		  		changed = true;
 		  		update(arr);
 		  	}
 		  	$('#itterations').text(++sorts['bubbleSort'].itterations);
 		    if (i < arr.length) timedLoop(++i);
-		    else sorts['bubbleSort'].display(arr, noChange);
+		    else if (changed) return sorts['bubbleSort'].display(arr);
 			}, 1)
 		})(0);
 	},
-	compare: function(array, noChange, itterations) {
+	compare: function(array) {
 		var arr = array.slice();
-	  if (noChange) return this.itterations;
-	  var noChange = true;
+	  var changed = false;
 	  for (var i=0; i < arr.length; i++) {
-	  	if (arr[i] > arr[i+1]) {
-	  		var temp = arr[i];
-	  		arr[i] = arr[i+1];
-	  		arr[i+1] = temp;
-	  		noChange = false;
+	  	if (arr[i+1] && arr[i].val > arr[i+1].val) {
+	  		swap(arr, i, i+1);
+	  		changed = true;
 	  	}
 	  	this.itterations++;
 	  }
-	  return sorts['bubbleSort'].compare(arr, noChange);
+	  return changed === true ? this.compare(arr) : this.itterations;
 	}
 };
 
@@ -63,14 +51,34 @@ sorts.bubbleSort = {
 sorts.insertionSort = {
 	name: 'Insertion Sort',
 	itterations: 0,
+	display: function(array, animate) {
+		var steps = [];
+		var arr = array.slice();
+	  for (var i=0; i < arr.length; i++) {
+	  	var focus = arr.slice()[i];
+	  	steps.push({ animation: 'highlight', color: 'red', data: focus });
+	    if (arr[i] && arr[i+1] && arr[i].val > arr[i+1].val) {
+	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
+	      swap(arr, i, i+1, steps);
+	      i = i-2 >= -1 ? i-2 : i-1;
+	    }
+	  	steps.push({ animation: 'clearHighlight', data: focus });
+	    this.itterations++;
+	  }
+	  console.log(steps);
+		if (animate) animateSteps(steps);
+	}
+};
+/* Original code, before refactoring to store and animate steps.
+sorts.insertionSort = {
+	name: 'Insertion Sort',
+	itterations: 0,
 	display: function(array) {
 		var arr = array.slice();
 		(function timedLoop(i) {
 			setTimeout(function() {
 				if (arr[i] > arr[i+1]) {
-		      var temp = arr[i];
-		      arr[i] = arr[i+1];
-		      arr[i+1] = temp;
+		      swap(arr, i, i+1);
 		      i -= 2;
 		    	update(arr);
 		    }
@@ -83,9 +91,7 @@ sorts.insertionSort = {
 		var arr = array.slice();
 	  for (var i=0; i < arr.length; i++) {
 	    if (arr[i] > arr[i+1]) {
-	      var temp = arr[i];
-	      arr[i] = arr[i+1];
-	      arr[i+1] = temp;
+	      swap(arr, i, i+1);
 	      i -= 2;
 	    }
 	    this.itterations++;
@@ -93,6 +99,7 @@ sorts.insertionSort = {
 		return this.itterations;
 	}
 };
+*/
 
 
 // compare working
@@ -106,7 +113,7 @@ sorts.selectionSort = {
 
 		var innerLoop = function(i, index) {
 		  setTimeout(function() {
-		  	if (arr[i] < arr[index]) index = i;
+		  	if (arr[i].val < arr[index].val) index = i;
 		  	$('#itterations').text(++sorts['selectionSort'].itterations);
 		  	update(result.concat(arr));
 		  	// colorize(this);
@@ -129,11 +136,11 @@ sorts.selectionSort = {
 		while (arr.length > 1) {
 			var index = 0;
 			for (var i=1; i<arr.length; i++) {
-				if (arr[i] < arr[index]) index = i;
+				if (arr[i].val < arr[index].val) index = i;
 				this.itterations++;
 			}
 			this.itterations++;
-			result.push(arr.splice(index,1)[0]);
+			result.push(arr.splice(index, 1)[0]);
 		}
 		result.push(arr[0]);
 		return this.itterations;
@@ -190,10 +197,8 @@ sorts.shellSort = {
 		var innerLoop = function(i, gap) {
 		  setTimeout(function() {
 		  	// colorize the intervals of 'gap'
-		  	if (arr[i] > arr[i+gap]) {
-					var temp = arr[i];
-		      arr[i] = arr[i+gap];
-		      arr[i+gap] = temp;
+		  	if (arr[i] && arr[i+gap] && arr[i].val > arr[i+gap].val) {
+					swap(arr, i, i+gap);
 		      i -= 2*gap;
 				}
 		  	$('#itterations').text(++sorts['selectionSort'].itterations);
@@ -225,10 +230,8 @@ sorts.shellSort = {
 			var gap = gaps[i];
 			for (var j=gap; j<=array.length*gap; j+=gap) {
 				// Compare at existing indicies of arr[gap[i]], arr[gap[i*2]], etc.
-				if (arr[j] > arr[j+gap]) {
-					var temp = arr[j];
-		      arr[j] = arr[j+gap];
-		      arr[j+gap] = temp;
+				if (arr[i] && arr[i+gap] && arr[j].val > arr[j+gap].val) {
+					swap(arr, j, j+gap);
 		      j -= 2*gap;
 				}
 				this.itterations++;
@@ -247,6 +250,15 @@ sorts.mergeSort = {
 	display: function(array) {
 		var arr = array.slice();
 
+		var compare = function(a, b) {
+			return a - b;
+		};
+
+		// sorts 0-2, then 2-4, then 0-4, then 4-6, then 6-8, then 4-8, then 0-8, then 8-10, 10-12, 8-12, 12-14, 14-16, 8-16, 0-16, etc.
+		for (var i=0; i<64; i++) {
+			//
+		}
+
 		var timedMerge = function(left, right, result, iLeft, iRight) {
 		  setTimeout(function() {
 		  	result = result || [];
@@ -254,10 +266,16 @@ sorts.mergeSort = {
 		  	iRight = iRight || 0;
 
 		    $('#itterations').text(++sorts['mergeSort'].itterations);
-		    if (left[iLeft] < right[iRight]) result.push(left[iLeft++]);
-		    else result.push(right[iRight++]);
+		    if (left[iLeft].val < right[iRight].val) {
+		    	result.push(left[iLeft++]);
+		    } else {
+		    	result.push(right[iRight++]);
+		    }
 
 		    if (iLeft < left.length && iRight < right.length) {
+		    	console.log('left', left);
+		    	console.log('right', right);
+		    	console.log('result', result);
 		    	timedLoop(left, right, result, iLeft, iRight);
 		    } else {
 		    	return result.concat(left.slice(iLeft)).concat(right.slice(iRight));
@@ -267,14 +285,15 @@ sorts.mergeSort = {
 
 		var mergeSort = function(array) {
 			sorts['mergeSort'].itterations++;
-			if (array.length < 2) return array;
 			var arr = array.slice();
+			if (arr.length < 2) return array;
 			
 			var middle = Math.floor(arr.length / 2);
 			var left = arr.slice(0, middle);
 			var right = arr.slice(middle);
 	    return timedMerge(mergeSort(left), mergeSort(right));
 	  };
+	  mergeSort(arr);
 
 	},
 	compare: function(array) {
@@ -287,7 +306,7 @@ sorts.mergeSort = {
 
 			while (iLeft < left.length && iRight < right.length) {
 				sorts['mergeSort'].itterations++;
-				if (left[iLeft] < right[iRight]) result.push(left[iLeft++]);
+				if (left[iLeft].val < right[iRight].val) result.push(left[iLeft++]);
 				else result.push(right[iRight++]);
 			}
 
@@ -306,9 +325,7 @@ sorts.mergeSort = {
 	  };
 		
 		var result = mergeSort(arr);
-		console.log('arr is ', arr);
-		console.log('result is', result);
-		return this.itterations;
+		return result;
 	}
 };
 
@@ -329,7 +346,7 @@ sorts.quickSort = {
 		(function timedLoop(i) {
 		  setTimeout(function() {
 		  	// var temp = arr.shift();
-		  	if(arr[i] > pivot) {
+		  	if(arr[i].val > pivot.val) {
 		  		left.push(arr[i]);
 		  	} else {
 		  		right.push(arr[i]);
@@ -357,7 +374,7 @@ sorts.quickSort = {
 		var arr = array.slice();
 		var left = [], right = [], pivot = arr[0];
     for (var i = 1; i < arr.length; i++) {
-    	if(arr[i] < pivot) left.push(arr[i]);
+    	if(arr[i].val < pivot.val) left.push(arr[i]);
     	else right.push(arr[i]);
     }
     return this.compare(left).concat(pivot, this.compare(right));
