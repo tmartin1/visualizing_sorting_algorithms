@@ -1,11 +1,9 @@
 // Helper function to process swapping of two elements in an array.
-var swap = function(arr, a, b, steps) {
-	steps = steps || [];
+var swap = function(arr, a, b) {
 	if (a === b) return;
 	var temp = arr[a];
 	arr[a] = arr[b];
 	arr[b] = temp;
-	// if (steps) steps.push({ animation: 'swap', data1: arr.slice(a, 1), data2: arr.slice(b, 1) });
 };
 
 // Object to hold all sort functions and properties.
@@ -48,14 +46,16 @@ sorts.insertionSort = {
 	  	var focus = arr.slice()[i];
 	  	steps.push({ animation: 'highlight', color: 'red', data: focus });
 	    if (arr[i] && arr[i+1] && arr[i].val > arr[i+1].val) {
+	  		steps.push({ animation: 'highlight', color: 'red', data: arr[i+1] });
 	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
-	      swap(arr, i, i+1, steps);
+	      swap(arr, i, i+1);
+	  		steps.push({ animation: 'clearHighlight', data: arr[i+1] });
 	      i = i-2 >= -1 ? i-2 : i-1;
-	    }
-	  	steps.push({ animation: 'clearHighlight', data: focus });
+	    } else {
+	  		steps.push({ animation: 'clearHighlight', data: arr[i] });
+	  	}
 	    this.itterations++;
 	  }
-	  console.log(steps);
 		if (animate) animateSteps(steps);
 	}
 };
@@ -66,43 +66,33 @@ sorts.insertionSort = {
 sorts.selectionSort = {
 	name: 'Selection Sort',
 	itterations: 0,
-	display: function(array) {
+	display: function(array, animate) {
+		var steps = [];
 		var arr = array.slice();
 		var result = [];
-
-		var innerLoop = function(i, index) {
-		  setTimeout(function() {
-		  	if (arr[i].val < arr[index].val) index = i;
-		  	$('#itterations').text(++sorts['selectionSort'].itterations);
-		  	update(result.concat(arr));
-		  	// colorize(this);
-		  	if (i <= arr.length) innerLoop(++i, index);
-		  	else outerLoop(index);
-	  	}, 1)
-	  };
-
-	  var outerLoop = function(index) {
-	  	result.push(arr.splice(index,1)[0]);
-	  	update(result.concat(arr));
-	  	if (arr.length > 0) innerLoop(0, 0);
-	  };
-		innerLoop(0, 0);
-		update(result);
-	},
-	compare: function(array) {
-		var arr = array.slice();
-		var result = [];
+		position = 0;
 		while (arr.length > 1) {
 			var index = 0;
 			for (var i=1; i<arr.length; i++) {
-				if (arr[i].val < arr[index].val) index = i;
+				var focus = arr.slice()[i];
+				steps.push({ animation: 'highlight', color: 'red', data: arr[i] });
+				if (arr[i].val < arr[index].val) {
+					steps.push({ animation: 'clearHighlight', data: arr[index] });
+					index = i;
+					steps.push({ animation: 'highlight', color: 'red', data: arr[index] });
+				} else {
+					steps.push({ animation: 'clearHighlight', data: arr[i] });
+				}
 				this.itterations++;
 			}
-			this.itterations++;
-			result.push(arr.splice(index, 1)[0]);
+			steps.push({ animation: 'swap', data1: arr[position], data2: arr[index] });
+			swap(arr, arr[position], arr[index]);
+			position++;
+			steps.push({ animation: 'highlight', color: 'red', data: arr[index] });
+			arr.splice(index, 1);
 		}
-		result.push(arr[0]);
-		return this.itterations;
+		// result.push(arr[0]);
+		return animate ? animateSteps(steps) : this.itterations;
 	}
 };
 
@@ -213,7 +203,8 @@ sorts.mergeSort = {
 			return a - b;
 		};
 
-		// sorts 0-2, then 2-4, then 0-4, then 4-6, then 6-8, then 4-8, then 0-8, then 8-10, 10-12, 8-12, 12-14, 14-16, 8-16, 0-16, etc.
+		// sorts 0-2, then 2-4, then 0-4, then 4-6, then 6-8, then 4-8, 
+		// ...then 0-8, then 8-10, 10-12, 8-12, 12-14, 14-16, 8-16, 0-16, etc.
 		for (var i=0; i<64; i++) {
 			//
 		}
