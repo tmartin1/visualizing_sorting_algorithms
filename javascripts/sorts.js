@@ -95,6 +95,7 @@ sorts.selectionSort = {
 
 
 // display not working
+/*
 sorts.heapSort = {
 	name: 'Heap Sort',
 	itterations: 0,
@@ -122,7 +123,7 @@ sorts.heapSort = {
 		return this.itterations;
 	}
 };
-
+*/
 
 // display is working
 sorts.shellSort = {
@@ -220,9 +221,7 @@ sorts.mergeSort = {
 		var arr = array.slice();
 
 		var merge = function(left, right) {
-			var result = [];
-			var iLeft = 0;
-			var iRight = 0;
+			var result = [], iLeft = 0, iRight = 0;
 
 			while (iLeft < left.length && iRight < right.length) {
 				sorts['mergeSort'].itterations++;
