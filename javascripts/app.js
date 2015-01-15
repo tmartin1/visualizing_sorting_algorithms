@@ -67,6 +67,26 @@ var update = function(data) {
 
 var parseStep = function(step) {
 	var animate = {
+		'update': function() {
+			// Update all rectangles based on their data.
+			if (!step.array) console.log('ERROR: parseStep.update called without target array.');
+			var arr = step.array.slice();
+			console.log(arr);
+			var selector = [];
+			var data = [];
+			for (var i=0; i<arr.length; i++) {
+				selector.push('#'+arr[i].id);
+				data.push(arr[i].val);
+			}
+			// var items = d3.select(selector)
+			// 	.data(data)
+			// 	.each()
+			// 		.ease('linear')
+			//     .attr('x', function(d,i) { return i*lineWidth; })
+		 //    	.attr('y', function(d,i) { return rHeight-d.val; })
+			//     .attr('height', function(d,i) { return d.val; });
+
+		},
 	  'swap': function() {
 	  	// Swap position of step.data1 and step.data2
 	  	var d1 = d3.select('#r'+step.data1.pos);
@@ -98,19 +118,19 @@ var animateSteps = function(steps) {
 };
 
 // Shuffles the array.
-var randomize = function(elements) {
+var randomize = function() {
 	$('#itterations').text('0');
 	unsorted = [];
 	for (var i=0; i<elements; i++) {
 		// unsorted.push(Math.floor(Math.random()*rHeight));
 		unsorted.push({ val: Math.floor(Math.random()*rHeight), pos: i });
 	}
-	populate(unsorted);
+	update(unsorted);
 	for (var x in sorts) {
 		sorts[x].itterations = 0;
 	}
 };
-randomize(elements);
+randomize();
 
 var startSort = function() {
 	$('#itterations').text('0');

@@ -5,7 +5,9 @@ var swap = function(arr, a, b) {
 	arr[a] = arr[b];
 	arr[b] = temp;
 };
-
+var unsortedColor = 'CornflowerBlue';
+var sortedColor = 'BlueViolet';
+var searchColor = 'red';
 // Object to hold all sort functions and properties.
 var sorts = {};
 
@@ -20,7 +22,7 @@ sorts.bubbleSort = {
 	  var changed = false;
 	  for (var i=0; i < arr.length; i++) {
 	  	var focus = arr.slice()[i];
-	  	steps.push({ animation: 'highlight', color: 'red', data: focus });
+	  	steps.push({ animation: 'highlight', color: searchColor, data: focus });
 	  	if (arr[i+1] && arr[i].val > arr[i+1].val) {
 	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
 	  		swap(arr, i, i+1);
@@ -44,9 +46,9 @@ sorts.insertionSort = {
 		var arr = array.slice();
 	  for (var i=0; i < arr.length; i++) {
 	  	var focus = arr.slice()[i];
-	  	steps.push({ animation: 'highlight', color: 'red', data: focus });
+	  	steps.push({ animation: 'highlight', color: searchColor, data: focus });
 	    if (arr[i] && arr[i+1] && arr[i].val > arr[i+1].val) {
-	  		steps.push({ animation: 'highlight', color: 'red', data: arr[i+1] });
+	  		steps.push({ animation: 'highlight', color: searchColor, data: arr[i+1] });
 	      steps.push({ animation: 'swap', data1: arr[i], data2: arr[i+1] });
 	      swap(arr, i, i+1);
 	  		steps.push({ animation: 'clearHighlight', data: arr[i+1] });
@@ -62,36 +64,31 @@ sorts.insertionSort = {
 
 
 // compare working
-// display is working
+// display working
 sorts.selectionSort = {
 	name: 'Selection Sort',
 	itterations: 0,
 	display: function(array, animate) {
 		var steps = [];
 		var arr = array.slice();
-		var result = [];
-		position = 0;
-		while (arr.length > 1) {
-			var index = 0;
-			for (var i=1; i<arr.length; i++) {
-				var focus = arr.slice()[i];
-				steps.push({ animation: 'highlight', color: 'red', data: arr[i] });
-				if (arr[i].val < arr[index].val) {
-					steps.push({ animation: 'clearHighlight', data: arr[index] });
-					index = i;
-					steps.push({ animation: 'highlight', color: 'red', data: arr[index] });
-				} else {
-					steps.push({ animation: 'clearHighlight', data: arr[i] });
-				}
+		for (var i=0; i<arr.length; i++) {
+			var index = i;
+			// after the next lowest element is placed in i, we don't need to search it again.
+			for (var j=i; j<arr.length; j++) {
 				this.itterations++;
+				steps.push({ animation: 'highlight', color: searchColor, data: arr[j] });
+				if (arr[j].val <= arr[index].val) {
+					steps.push({ animation: 'clearHighlight', data: arr[index] });
+					index = j;
+					steps.push({ animation: 'highlight', color: searchColor, data: arr[index] });
+				} else {
+					steps.push({ animation: 'clearHighlight', data: arr[j] });
+				}
 			}
-			steps.push({ animation: 'swap', data1: arr[position], data2: arr[index] });
-			swap(arr, arr[position], arr[index]);
-			position++;
-			steps.push({ animation: 'highlight', color: 'red', data: arr[index] });
-			arr.splice(index, 1);
+			steps.push({ animation: 'highlight', color: sortedColor, data: arr[index] });
+			steps.push({ animation: 'swap', data1: arr[index], data2: arr[i] });
+			swap(arr, index, i);
 		}
-		// result.push(arr[0]);
 		return animate ? animateSteps(steps) : this.itterations;
 	}
 };
