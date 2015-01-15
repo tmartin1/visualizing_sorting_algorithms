@@ -9,7 +9,6 @@ var swap = function(arr, a, b) {
 // Object to hold all sort functions and properties.
 var sorts = {};
 
-// compare working
 // display working
 sorts.bubbleSort = {
 	name: 'Bubble Sort',
@@ -41,7 +40,6 @@ sorts.bubbleSort = {
 	}
 };
 
-// compare working
 // display working
 sorts.insertionSort = {
 	name: 'Insertion Sort',
@@ -58,9 +56,7 @@ sorts.insertionSort = {
 	      swap(arr, i, i+1);
 	  		steps.push({ animation: 'clearHighlight', data: arr[i+1] });
 	      i = i-2 >= -1 ? i-2 : i-1;
-	    } else {
-	  		// steps.push({ animation: 'clearHighlight', data: arr[i] });
-	  	}
+	    }
 	    this.itterations++;
 	  }
 		if (animate) animateSteps(steps);
@@ -68,7 +64,6 @@ sorts.insertionSort = {
 };
 
 
-// compare working
 // display working
 sorts.selectionSort = {
 	name: 'Selection Sort',
@@ -99,7 +94,6 @@ sorts.selectionSort = {
 };
 
 
-// compare not working
 // display not working
 sorts.heapSort = {
 	name: 'Heap Sort',
@@ -130,45 +124,14 @@ sorts.heapSort = {
 };
 
 
-// compare is working
 // display is working
 sorts.shellSort = {
 	name: 'Shell Sort',
 	itterations: 0,
-	display: function(array) {
+	display: function(array, animate) {
 		var arr = array.slice();
 		var gaps = [];
-		// Define steps, 2^k - 1
-		var i = 1;
-		while ( (Math.pow(2,i) - 1) < (arr.length / 2) ) {
-			gaps.unshift(Math.pow(2,i) - 1);
-			i++;
-		}
-
-		var innerLoop = function(i, gap) {
-		  setTimeout(function() {
-		  	// colorize the intervals of 'gap'
-		  	if (arr[i] && arr[i+gap] && arr[i].val > arr[i+gap].val) {
-					swap(arr, i, i+gap);
-		      i -= 2*gap;
-				}
-		  	$('#itterations').text(++sorts['selectionSort'].itterations);
-		  	update(arr);
-		  	if (i <= array.length*gap) innerLoop(i+gap, gap);
-		  	else outerLoop();
-	  	}, 1)
-	  };
-
-	  var outerLoop = function() {
-	  	if (gaps.length > 0) innerLoop(0, gaps.shift());
-	  };
-
-		innerLoop(1, gaps.shift());
-		update(arr);
-	},
-	compare: function(array) {
-		var arr = array.slice();
-		var gaps = [];
+		var steps = [];
 		// Define steps, 2^k - 1
 		var i = 1;
 		while ( (Math.pow(2,i) - 1) < (arr.length / 2) ) {
@@ -180,15 +143,20 @@ sorts.shellSort = {
 			// For each gap width, compare and sort accordingly.
 			var gap = gaps[i];
 			for (var j=gap; j<=array.length*gap; j+=gap) {
+				if (arr[j]) steps.push({ animation: 'highlight', color: searchColor, data: arr[j] });
 				// Compare at existing indicies of arr[gap[i]], arr[gap[i*2]], etc.
-				if (arr[i] && arr[i+gap] && arr[j].val > arr[j+gap].val) {
+				if (arr[j] && arr[j+gap] && arr[j].val > arr[j+gap].val) {
+					if (gap === 1) steps.push({ animation: 'highlight', color: sortedColor, data: arr[j] });
+					steps.push({ animation: 'swap', data1: arr[j], data2: arr[j+gap] });
 					swap(arr, j, j+gap);
 		      j -= 2*gap;
+				} else {
+					if (arr[j]) steps.push({ animation: 'highlight', color: gap===1 ? sortedColor : unsortedColor, data: arr[j] });
 				}
 				this.itterations++;
 			}
 		}
-		return this.itterations;
+		return animate ? animateSteps(steps) : this.itterations;
 	}
 };
 
