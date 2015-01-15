@@ -293,6 +293,13 @@ input[type="reset"],
 input[type="submit"] {
   -webkit-appearance: button; /* 2 */
   cursor: pointer; /* 3 */
+  color: black;
+  margin-left: 20px;
+}
+
+select {
+  -webkit-appearance: menulist-button; /* 2 */
+  color: black;
 }
 
 /**
