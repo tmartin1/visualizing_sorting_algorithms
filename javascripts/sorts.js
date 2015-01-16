@@ -101,16 +101,6 @@ sorts.heapSort = {
 	itterations: 0,
 	display: function(array) {
 		var arr = array.slice();
-		//
-		(function timedLoop(i) {
-		  setTimeout(function() {
-		  	//
-		    $('#itterations').text(++sorts['heapSort'].itterations);
-		  }, 1)
-		})(0)
-	},
-	compare: function(array) {
-		var arr = array.slice();
 		var binaryArray = [];
 		var result = [];
 
@@ -162,62 +152,11 @@ sorts.shellSort = {
 };
 
 
-// compare is working
 // display not working
 sorts.mergeSort = {
 	name: 'Merge Sort',
 	itterations: 0,
-	display: function(array) {
-		var arr = array.slice();
-
-		var compare = function(a, b) {
-			return a - b;
-		};
-
-		// sorts 0-2, then 2-4, then 0-4, then 4-6, then 6-8, then 4-8, 
-		// ...then 0-8, then 8-10, 10-12, 8-12, 12-14, 14-16, 8-16, 0-16, etc.
-		for (var i=0; i<64; i++) {
-			//
-		}
-
-		var timedMerge = function(left, right, result, iLeft, iRight) {
-		  setTimeout(function() {
-		  	result = result || [];
-		  	iLeft = iLeft || 0;
-		  	iRight = iRight || 0;
-
-		    $('#itterations').text(++sorts['mergeSort'].itterations);
-		    if (left[iLeft].val < right[iRight].val) {
-		    	result.push(left[iLeft++]);
-		    } else {
-		    	result.push(right[iRight++]);
-		    }
-
-		    if (iLeft < left.length && iRight < right.length) {
-		    	console.log('left', left);
-		    	console.log('right', right);
-		    	console.log('result', result);
-		    	timedLoop(left, right, result, iLeft, iRight);
-		    } else {
-		    	return result.concat(left.slice(iLeft)).concat(right.slice(iRight));
-		    }
-		  }, 1);
-		};
-
-		var mergeSort = function(array) {
-			sorts['mergeSort'].itterations++;
-			var arr = array.slice();
-			if (arr.length < 2) return array;
-			
-			var middle = Math.floor(arr.length / 2);
-			var left = arr.slice(0, middle);
-			var right = arr.slice(middle);
-	    return timedMerge(mergeSort(left), mergeSort(right));
-	  };
-	  mergeSort(arr);
-
-	},
-	compare: function(array) {
+	display: function(array, animate) {
 		var arr = array.slice();
 
 		var merge = function(left, right) {
@@ -249,54 +188,28 @@ sorts.mergeSort = {
 };
 
 
-// compare works
 // display not working
 sorts.quickSort = {
 	name: 'Quick Sort',
 	itterations: 0,
-	display: function(array, fractal) {
+	steps: [],
+	display: function(array, animate) {
+		if (array.length === 0) return sorts.quickSort.steps;
 		var arr = array.slice();
-		var fractal = fractal || arr.slice();
-		if (arr.length === 0) return [];
 		var left = [];
 		var right = [];
 		var pivot = arr[0];
-
-		(function timedLoop(i) {
-		  setTimeout(function() {
-		  	// var temp = arr.shift();
-		  	if(arr[i].val > pivot.val) {
-		  		left.push(arr[i]);
-		  	} else {
-		  		right.push(arr[i]);
-		  	}
-    		// console.log('left',left);
-    		// console.log('right',right);
-    		var temp = fractal.shift();
-    		console.log(left.concat(right, fractal).length)
-
-		  	// update(left.concat(right, fractal));
-		  	
-		  	$('#itterations').text(++sorts['quickSort'].itterations);
-		    if (i < arr.length) {
-		    	timedLoop(++i);
-		    } else {
-		    	// fractal.unshift(temp);
-		    }
-		  }, 1)
-		    	sorts['quickSort'].display(left, fractal).concat(pivot, sorts['quickSort'].display(right, fractal));
-		  update(arr);
-		})(0)
-	},
-	compare: function(array) {
-		if (array.length === 0) return [];
-		var arr = array.slice();
-		var left = [], right = [], pivot = arr[0];
     for (var i = 1; i < arr.length; i++) {
-    	if(arr[i].val < pivot.val) left.push(arr[i]);
-    	else right.push(arr[i]);
+    	sorts.quickSort.steps.push({ animation: 'highlight', color: sortedColor, data: arr[i] });
+    	if(arr[i].val < pivot.val) {
+    		left.push(arr[i]);
+    	} else {
+    		right.push(arr[i]);
+    	}
+    	sorts.quickSort.steps.push({ animation: 'clearHighlight', data: arr[i] });
     }
-    return this.compare(left).concat(pivot, this.compare(right));
+    return sorts.quickSort.display(left, animate).concat(pivot, sorts.quickSort.display(right, animate));
+    return (animate) ? animateSteps(steps) : this.itterations;
 	}
 };
 

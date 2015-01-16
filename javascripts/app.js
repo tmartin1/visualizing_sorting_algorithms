@@ -1,12 +1,5 @@
 /* To do:
  *	 - complete heap sort
- *	 - complete shell sort
- *	 - complete merge sort
- *	 - refator sort methods such that display functions and compare
- *		 functions are processed by the same external function that takes
- *		 the array and a callback as parameters.
- * 	 - Add table to index.html to show the comparrison of itterations
- * 		 for each of the different sorting algorithms.
  * 	 - Add user input for array size (16, 32, 64).
  * 	 - Add user input for animation speed (slide bar?).
  */
@@ -54,8 +47,6 @@ var populate = function(data) {
     .attr('width', lineWidth);
 };
 
-// Updates the SVG element when called.
-// Refactor this to be handled by parseSteps and animateSteps so that animations are modularized.
 var update = function(data) {
   var items = d3.selectAll('rect')
     .data(data)
@@ -68,8 +59,6 @@ var update = function(data) {
 			    .attr('height', function(d,i) { return d.val; });
 		  });
 };
-
-// Refactoring for cleaner execution of animation. Updates SVG using step data.
 
 var parseStep = function(step) {
 	var animate = {
@@ -84,14 +73,6 @@ var parseStep = function(step) {
 				selector.push('#'+arr[i].id);
 				data.push(arr[i].val);
 			}
-			// var items = d3.select(selector)
-			// 	.data(data)
-			// 	.each()
-			// 		.ease('linear')
-			//     .attr('x', function(d,i) { return i*lineWidth; })
-		 //    	.attr('y', function(d,i) { return rHeight-d.val; })
-			//     .attr('height', function(d,i) { return d.val; });
-
 		},
 	  'swap': function() {
 	  	// Swap position of step.data1 and step.data2
@@ -126,6 +107,7 @@ var animateSteps = function(steps) {
 // Shuffles the array.
 var randomize = function() {
 	$('#itterations').text('0');
+	d3.selectAll('rect').style('fill', unsortedColor);
 	unsorted = [];
 	for (var i=0; i<elements; i++) {
 		// unsorted.push(Math.floor(Math.random()*rHeight));
